@@ -7,10 +7,10 @@ import wavelink
 from discord import app_commands
 
 PLATFORM_PATTERNS = {
-    "Spotify": re.compile(r"https?://open\\.spotify\\.com/", re.I),
-    "Apple Music": re.compile(r"https?://music\\.apple\\.com/", re.I),
-    "Deezer": re.compile(r"https?://(?:www\\.)?deezer\\.com/", re.I),
-    "TIDAL": re.compile(r"https?://(?:www\\.)?tidal\\.com/", re.I),
+    "Spotify": re.compile(r"https?://open\.spotify\.com/", re.I),
+    "Apple Music": re.compile(r"https?://music\.apple\.com/", re.I),
+    "Deezer": re.compile(r"https?://(?:www\.)?deezer\.com/", re.I),
+    "TIDAL": re.compile(r"https?://(?:www\.)?tidal\.com/", re.I),
 }
 
 
@@ -134,8 +134,8 @@ class Music:
                 return await interaction.response.send_message("Queue is empty.", ephemeral=True)
             upcoming = list(player.queue)[:10]
             lines = [f"{i + 1}. {track.title}" for i, track in enumerate(upcoming)]
-            current = f"**Now:** {player.current.title}\\n" if player.current else ""
-            await interaction.response.send_message(current + ("\\n".join(lines) or "No upcoming tracks."))
+            current = f"**Now:** {player.current.title}\n" if player.current else ""
+            await interaction.response.send_message(current + ("\n".join(lines) or "No upcoming tracks."))
 
         @tree.command(name="volume", description="Set player volume (0-100)")
         async def volume(interaction: discord.Interaction, value: app_commands.Range[int, 0, 100]):

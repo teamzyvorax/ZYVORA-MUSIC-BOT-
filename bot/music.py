@@ -6,10 +6,10 @@ import wavelink
 from discord import app_commands
 
 PLATFORM_PATTERNS = {
-    "Spotify": re.compile(r"https?://open\\.spotify\\.com/", re.I),
-    "Apple Music": re.compile(r"https?://music\\.apple\\.com/", re.I),
-    "Deezer": re.compile(r"https?://(?:www\\.)?deezer\\.com/", re.I),
-    "TIDAL": re.compile(r"https?://(?:www\\.)?tidal\\.com/", re.I),
+    "Spotify": re.compile(r"https?://open\.spotify\.com/", re.I),
+    "Apple Music": re.compile(r"https?://music\.apple\.com/", re.I),
+    "Deezer": re.compile(r"https?://(?:www\.)?deezer\.com/", re.I),
+    "TIDAL": re.compile(r"https?://(?:www\.)?tidal\.com/", re.I),
 }
 TEXT_COMMANDS = {"play", "p", "search", "skip", "next", "pause", "resume", "stop", "queue", "q", "volume", "vol", "loop", "shuffle", "clear", "nowplaying", "np", "leave", "disconnect", "join", "help", "musichelp"}
 

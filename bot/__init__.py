@@ -1,0 +1,1 @@
+"""ZYVORA MUSIC BOT package."""

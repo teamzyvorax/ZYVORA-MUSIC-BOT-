@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from .dashboard import start_dashboard
 from .music import Music
 from .moderation import Moderation
+from .community import Community
 
 load_dotenv()
 
@@ -20,6 +21,7 @@ class ZyvoraBot(discord.Client):
         self.tree = discord.app_commands.CommandTree(self)
         self.music = Music(self)
         self.moderation = Moderation(self)
+        self.community = Community(self)
 
     async def setup_hook(self):
         host = os.getenv("LAVALINK_HOST", "localhost")
@@ -31,6 +33,7 @@ class ZyvoraBot(discord.Client):
         await wavelink.Pool.connect(client=self, nodes=[node])
         await self.music.register(self.tree)
         await self.moderation.register(self.tree)
+        await self.community.register(self.tree)
         await self.tree.sync()
 
     async def on_message(self, message: discord.Message):
@@ -46,6 +49,7 @@ class ZyvoraBot(discord.Client):
             print(f"Queue advance failed: {exc}")
 
     async def on_ready(self):
+        await self.community.on_ready()
         print(f"ZYVORA MUSIC online as {self.user} | servers={len(self.guilds)}")
 
 async def main():

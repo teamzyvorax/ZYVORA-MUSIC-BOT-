@@ -119,7 +119,9 @@ class UserManagement:
         @tree.command(name="nickname", description="Change a member's server nickname")
         @app_commands.default_permissions(manage_nicknames=True)
         @app_commands.checks.has_permissions(manage_nicknames=True)
-        async def nickname(interaction: discord.Interaction, member: discord.Member, name: app_commands.Range[str, 1, 32]):
+        async def nickname(interaction: discord.Interaction, member: discord.Member, name: str):
+            if not name.strip() or len(name) > 32:
+                return await interaction.response.send_message("Nickname must contain 1-32 characters.", ephemeral=True)
             if member.id == interaction.guild.owner_id or member.top_role >= interaction.user.top_role and interaction.user.id != interaction.guild.owner_id:
                 return await interaction.response.send_message("You cannot change the nickname of a member with an equal or higher role.", ephemeral=True)
             if interaction.guild.me and member.top_role >= interaction.guild.me.top_role:

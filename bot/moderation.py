@@ -47,6 +47,7 @@ class Moderation:
     async def register(self, tree: app_commands.CommandTree) -> None:
         @tree.command(name="kick", description="Kick a member from this server")
         @app_commands.default_permissions(kick_members=True)
+        @app_commands.checks.has_permissions(kick_members=True)
         @app_commands.describe(member="Member to kick", reason="Reason shown in the audit log")
         async def kick(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
             error = self.hierarchy_error(interaction, member)
@@ -61,6 +62,7 @@ class Moderation:
 
         @tree.command(name="ban", description="Ban a member from this server")
         @app_commands.default_permissions(ban_members=True)
+        @app_commands.checks.has_permissions(ban_members=True)
         @app_commands.describe(member="Member to ban", reason="Reason shown in the audit log", delete_message_days="Delete recent message history (0-7 days)")
         async def ban(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided", delete_message_days: app_commands.Range[int, 0, 7] = 0):
             error = self.hierarchy_error(interaction, member)
@@ -75,6 +77,7 @@ class Moderation:
 
         @tree.command(name="unban", description="Unban a user by Discord ID")
         @app_commands.default_permissions(ban_members=True)
+        @app_commands.checks.has_permissions(ban_members=True)
         async def unban(interaction: discord.Interaction, user_id: str, reason: str = "No reason provided"):
             if not user_id.isdigit():
                 return await interaction.response.send_message("Enter a numeric Discord user ID.", ephemeral=True)
@@ -90,6 +93,7 @@ class Moderation:
 
         @tree.command(name="timeout", description="Temporarily prevent a member from chatting")
         @app_commands.default_permissions(moderate_members=True)
+        @app_commands.checks.has_permissions(moderate_members=True)
         @app_commands.describe(member="Member to timeout", minutes="Duration, 1 to 40320 minutes (28 days)", reason="Reason")
         async def timeout(interaction: discord.Interaction, member: discord.Member, minutes: app_commands.Range[int, 1, 40320], reason: str = "No reason provided"):
             error = self.hierarchy_error(interaction, member)
@@ -104,6 +108,7 @@ class Moderation:
 
         @tree.command(name="untimeout", description="Remove a member's timeout")
         @app_commands.default_permissions(moderate_members=True)
+        @app_commands.checks.has_permissions(moderate_members=True)
         async def untimeout(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
             error = self.hierarchy_error(interaction, member)
             if error:
@@ -117,6 +122,7 @@ class Moderation:
 
         @tree.command(name="purge", description="Delete 1-100 recent messages in this channel")
         @app_commands.default_permissions(manage_messages=True)
+        @app_commands.checks.has_permissions(manage_messages=True)
         async def purge(interaction: discord.Interaction, amount: app_commands.Range[int, 1, 100]):
             if not isinstance(interaction.channel, discord.TextChannel):
                 return await interaction.response.send_message("Use this in a server text channel.", ephemeral=True)
@@ -130,6 +136,7 @@ class Moderation:
 
         @tree.command(name="slowmode", description="Set channel slowmode in seconds (0-21600)")
         @app_commands.default_permissions(manage_channels=True)
+        @app_commands.checks.has_permissions(manage_channels=True)
         async def slowmode(interaction: discord.Interaction, seconds: app_commands.Range[int, 0, 21600]):
             if not isinstance(interaction.channel, discord.TextChannel):
                 return await interaction.response.send_message("Use this in a server text channel.", ephemeral=True)
@@ -154,16 +161,19 @@ class Moderation:
 
         @tree.command(name="lock", description="Prevent @everyone from sending messages here")
         @app_commands.default_permissions(manage_channels=True)
+        @app_commands.checks.has_permissions(manage_channels=True)
         async def lock(interaction: discord.Interaction):
             await set_lock(interaction, True)
 
         @tree.command(name="unlock", description="Allow @everyone to send messages here again")
         @app_commands.default_permissions(manage_channels=True)
+        @app_commands.checks.has_permissions(manage_channels=True)
         async def unlock(interaction: discord.Interaction):
             await set_lock(interaction, False)
 
         @tree.command(name="warn", description="Send a moderation warning to a member")
         @app_commands.default_permissions(moderate_members=True)
+        @app_commands.checks.has_permissions(moderate_members=True)
         async def warn(interaction: discord.Interaction, member: discord.Member, reason: str):
             error = self.hierarchy_error(interaction, member)
             if error:

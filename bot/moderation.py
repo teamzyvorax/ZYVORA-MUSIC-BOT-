@@ -10,8 +10,9 @@ from discord import app_commands
 class Moderation:
     """Permission-checked server moderation slash commands."""
 
-    def __init__(self, bot: discord.Client):
+    def __init__(self, bot: discord.Client, users=None):
         self.bot = bot
+        self.users = users
         raw_log_id = os.getenv("MOD_LOG_CHANNEL_ID", "").strip()
         self.log_channel_id = int(raw_log_id) if raw_log_id.isdigit() else None
 
@@ -178,10 +179,12 @@ class Moderation:
             error = self.hierarchy_error(interaction, member)
             if error:
                 return await interaction.response.send_message(error, ephemeral=True)
+            warning_id = self.users.add_warning(interaction.guild_id, member.id, interaction.user.id, reason) if self.users else None
             try:
                 await member.send(f"You received a moderation warning in **{interaction.guild.name}**.\nReason: {reason}")
                 dm_status = "DM delivered"
             except discord.Forbidden:
                 dm_status = "DM closed; warning logged only"
             await self.log(interaction.guild, "Member warned", f"{member.mention} ({member.id})\nReason: {reason}\n{dm_status}", interaction.user)
-            await interaction.response.send_message(f"⚠️ Warning processed for **{member}** ({dm_status}).", ephemeral=True)
+            suffix = f" Warning ID: #{warning_id}." if warning_id else ""
+            await interaction.response.send_message(f"⚠️ Warning processed for **{member}** ({dm_status}).{suffix}", ephemeral=True)

@@ -17,6 +17,20 @@ Multi-server Discord music bot built with discord.py, Wavelink and Lavalink v4.
 4. In any server text channel, type commands such as: `play faded`, `skip`, `pause`, `resume`, `queue`, `shuffle`, `volume 50`, `loop track`, `clear`, `stop`, `nowplaying`, `join`, `leave`, or `help`.
 5. The user requesting playback must be connected to a voice channel. The bot needs View Channel, Send Messages, Read Message History, Connect and Speak permissions.
 
+## Server moderation
+The bot includes permission-gated slash commands:
+- `/kick member reason`
+- `/ban member reason delete_message_days`
+- `/unban user_id reason`
+- `/timeout member minutes reason` (up to 28 days)
+- `/untimeout member reason`
+- `/warn member reason` (DM attempt plus optional log)
+- `/purge amount` (1-100 recent messages)
+- `/slowmode seconds` (0-21600)
+- `/lock` and `/unlock`
+
+Moderation commands are restricted by Discord's native command permissions and check role hierarchy for member actions. The bot's highest role must be above the target. For action logs, create a private moderation-log text channel, copy its channel ID, and set `MOD_LOG_CHANNEL_ID=<channel_id>` in `.env`. Give the bot permission to view and send messages in that channel. Warnings are not stored in a database in this version; the bot attempts to DM the member and writes to the configured log channel when available.
+
 ## Provider and copyright limits
 A Spotify, Apple Music, Deezer or TIDAL URL is not itself a playable audio stream. The bot does not extract protected audio or bypass DRM. Provider metadata/API adapters are not yet implemented. Playback must use a source and stream that you are authorized to play. YouTube must only be integrated through a terms-compliant, authorized method.
 

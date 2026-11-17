@@ -1,21 +1,20 @@
 import asyncio
 import os
-
 import discord
 import wavelink
 from dotenv import load_dotenv
-
 from .dashboard import start_dashboard
 from .music import Music
 
 load_dotenv()
-
 
 class ZyvoraBot(discord.Client):
     def __init__(self):
         intents = discord.Intents.default()
         intents.guilds = True
         intents.voice_states = True
+        # Required for no-prefix text commands; also enable in Discord Developer Portal.
+        intents.message_content = True
         super().__init__(intents=intents)
         self.tree = discord.app_commands.CommandTree(self)
         self.music = Music(self)
@@ -31,6 +30,9 @@ class ZyvoraBot(discord.Client):
         await self.music.register(self.tree)
         await self.tree.sync()
 
+    async def on_message(self, message: discord.Message):
+        await self.music.handle_message(message)
+
     async def on_wavelink_track_end(self, payload):
         player = payload.player
         if not player:
@@ -43,7 +45,6 @@ class ZyvoraBot(discord.Client):
     async def on_ready(self):
         print(f"ZYVORA MUSIC online as {self.user} | servers={len(self.guilds)}")
 
-
 async def main():
     token = os.getenv("DISCORD_TOKEN")
     if not token:
@@ -52,7 +53,6 @@ async def main():
     await start_dashboard(bot)
     async with bot:
         await bot.start(token)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

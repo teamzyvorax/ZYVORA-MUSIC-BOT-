@@ -29,7 +29,15 @@ The bot includes permission-gated slash commands:
 - `/slowmode seconds` (0-21600)
 - `/lock` and `/unlock`
 
-Moderation commands are restricted by Discord's native command permissions and check role hierarchy for member actions. The bot's highest role must be above the target. For action logs, create a private moderation-log text channel, copy its channel ID, and set `MOD_LOG_CHANNEL_ID=<channel_id>` in `.env`. Give the bot permission to view and send messages in that channel. Warnings are not stored in a database in this version; the bot attempts to DM the member and writes to the configured log channel when available.
+Moderation commands are restricted by Discord's native command permissions and check role hierarchy for member actions. The bot's highest role must be above the target. For action logs, create a private moderation-log text channel, copy its channel ID, and set `MOD_LOG_CHANNEL_ID=<channel_id>` in `.env`. Give the bot permission to view and send messages in that channel. Warnings are stored in the user database; the bot also attempts to DM the member and writes to the configured log channel when available.
+
+## User management
+- `/userinfo [member]`, `/avatar [member]`, `/serverinfo`, and `/membercount` show member/server details.
+- `/role add member role` and `/role remove member role` manage roles with Manage Roles checks and bot/user role-hierarchy protection.
+- `/nickname member name` changes a server nickname (Manage Nicknames required).
+- `/warns member` shows the latest 20 stored warnings; `/warnings_clear member` clears that member's warning history (Moderate Members required).
+- `/leaderboard` ranks the top 10 members by messages recorded after this feature is enabled. Bots are excluded.
+- Warnings and message counts are stored in `users.sqlite3`. Persist this file with your deployment so records survive container replacement.
 
 ## Provider and copyright limits
 A Spotify, Apple Music, Deezer or TIDAL URL is not itself a playable audio stream. The bot does not extract protected audio or bypass DRM. Provider metadata/API adapters are not yet implemented. Playback must use a source and stream that you are authorized to play. YouTube must only be integrated through a terms-compliant, authorized method.

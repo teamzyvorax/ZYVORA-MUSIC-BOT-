@@ -97,6 +97,11 @@ class Music:
         arg = parts[1].strip() if len(parts) > 1 else ""
         guild = message.guild
         player = self.player(guild)
+        if player and command not in {"help", "musichelp", "join"}:
+            member_voice = message.author.voice.channel if isinstance(message.author, discord.Member) and message.author.voice else None
+            if member_voice != player.channel:
+                await message.reply("Join my voice channel before controlling playback.", mention_author=False)
+                return
         try:
             if command in {"play", "p", "search"}:
                 if isinstance(message.author, discord.Member):

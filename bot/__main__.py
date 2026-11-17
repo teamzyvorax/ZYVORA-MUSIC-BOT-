@@ -4,7 +4,7 @@ import discord
 import wavelink
 from dotenv import load_dotenv
 from .dashboard import start_dashboard
-from .music import Music
+from .music import Music\nfrom .moderation import Moderation
 
 load_dotenv()
 
@@ -17,7 +17,7 @@ class ZyvoraBot(discord.Client):
         intents.message_content = True
         super().__init__(intents=intents)
         self.tree = discord.app_commands.CommandTree(self)
-        self.music = Music(self)
+        self.music = Music(self)\n        self.moderation = Moderation(self)
 
     async def setup_hook(self):
         host = os.getenv("LAVALINK_HOST", "localhost")
@@ -27,7 +27,7 @@ class ZyvoraBot(discord.Client):
             raise RuntimeError("LAVALINK_PASSWORD is missing.")
         node = wavelink.Node(uri=f"http://{host}:{port}", password=password)
         await wavelink.Pool.connect(client=self, nodes=[node])
-        await self.music.register(self.tree)
+        await self.music.register(self.tree)\n        await self.moderation.register(self.tree)
         await self.tree.sync()
 
     async def on_message(self, message: discord.Message):

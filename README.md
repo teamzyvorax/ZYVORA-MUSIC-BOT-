@@ -34,6 +34,14 @@ Moderation commands are restricted by Discord's native command permissions and c
 ## Provider and copyright limits
 A Spotify, Apple Music, Deezer or TIDAL URL is not itself a playable audio stream. The bot does not extract protected audio or bypass DRM. Provider metadata/API adapters are not yet implemented. Playback must use a source and stream that you are authorized to play. YouTube must only be integrated through a terms-compliant, authorized method.
 
+
+## Community features
+- `/rules` posts a ready-to-use server rules and regulations embed.
+- `/announce channel title message` posts a staff announcement (Manage Server required).
+- `/giveaway prize duration_minutes winners` runs a reaction-entry giveaway and announces randomly selected winners when it ends (Manage Server required). Giveaways are held in memory; restarting the bot cancels active giveaways.
+- `/youtube_add channel_id announce_channel`, `/youtube_remove channel_id`, and `/youtube_list` manage upload notifications per server.
+- YouTube notifications use the official YouTube Data API v3. Create an API key with YouTube Data API v3 enabled and set `YOUTUBE_API_KEY`. Use the channel ID (usually begins with `UC`); polling runs every five minutes. API quota and channel visibility can affect delivery. Subscription records are stored in `community.sqlite3`; persist this file in Docker.
+
 ## Setup
 1. Create a bot at https://discord.com/developers/applications.
 2. Invite it with the bot and applications.commands scopes. Grant Connect, Speak, View Channel, Send Messages and Read Message History as needed.

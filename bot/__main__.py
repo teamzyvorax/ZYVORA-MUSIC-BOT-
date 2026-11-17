@@ -7,6 +7,7 @@ from .dashboard import start_dashboard
 from .music import Music
 from .moderation import Moderation
 from .community import Community
+from .users import UserManagement
 
 load_dotenv()
 
@@ -20,7 +21,8 @@ class ZyvoraBot(discord.Client):
         super().__init__(intents=intents)
         self.tree = discord.app_commands.CommandTree(self)
         self.music = Music(self)
-        self.moderation = Moderation(self)
+        self.users = UserManagement(self)
+        self.moderation = Moderation(self, self.users)
         self.community = Community(self)
 
     async def setup_hook(self):
@@ -34,9 +36,11 @@ class ZyvoraBot(discord.Client):
         await self.music.register(self.tree)
         await self.moderation.register(self.tree)
         await self.community.register(self.tree)
+        await self.users.register(self.tree)
         await self.tree.sync()
 
     async def on_message(self, message: discord.Message):
+        self.users.track_message(message)
         await self.music.handle_message(message)
 
     async def on_wavelink_track_end(self, payload):

@@ -1,0 +1,22 @@
+services:
+  lavalink:
+    image: ghcr.io/lavalink-devs/lavalink:4
+    container_name: zyvora-lavalink
+    restart: unless-stopped
+    environment:
+      SERVER_PORT: 2333
+      LAVALINK_SERVER_PASSWORD: ${LAVALINK_PASSWORD}
+    volumes:
+      - ./application.yml:/opt/Lavalink/application.yml:ro
+    expose:
+      - "2333"
+
+  bot:
+    build: .
+    container_name: zyvora-music-bot
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - lavalink
+    ports:
+      - "8080:8080"

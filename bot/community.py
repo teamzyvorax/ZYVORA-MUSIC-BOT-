@@ -190,10 +190,26 @@ class Community:
                         if response.status != 200 or not data.get("items"):
                             return await interaction.followup.send("YouTube channel not found or API key/quota issue. Check the channel ID and API key.", ephemeral=True)
                 name = data["items"][0]["snippet"]["title"]
+                # Seed the latest existing upload so subscribing does not announce an old video.
+                search_params = {
+                    "key": self.youtube_key,
+                    "channelId": channel_id,
+                    "part": "snippet",
+                    "order": "date",
+                    "type": "video",
+                    "maxResults": "1",
+                }
+                async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
+                    async with session.get("https://www.googleapis.com/youtube/v3/search", params=search_params) as response:
+                        latest_data = await response.json()
+                        if response.status != 200:
+                            return await interaction.followup.send("YouTube API could not read this channel's uploads. Check API access and quota.", ephemeral=True)
+                latest_items = latest_data.get("items", [])
+                latest_id = latest_items[0].get("id", {}).get("videoId") if latest_items else None
                 self.db.execute(
-                    "INSERT INTO youtube_subscriptions(guild_id, channel_id, channel_name, announce_channel_id, last_video_id) VALUES(?,?,?,?,NULL) "
-                    "ON CONFLICT(guild_id, channel_id) DO UPDATE SET channel_name=excluded.channel_name, announce_channel_id=excluded.announce_channel_id",
-                    (interaction.guild_id, channel_id, name, announce_channel.id),
+                    "INSERT INTO youtube_subscriptions(guild_id, channel_id, channel_name, announce_channel_id, last_video_id) VALUES(?,?,?,?,?) "
+                    "ON CONFLICT(guild_id, channel_id) DO UPDATE SET channel_name=excluded.channel_name, announce_channel_id=excluded.announce_channel_id, last_video_id=excluded.last_video_id",
+                    (interaction.guild_id, channel_id, name, announce_channel.id, latest_id),
                 )
                 self.db.commit()
                 if not self.youtube_poll.is_running():
